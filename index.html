@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TO-DO</title>
+    <script src="http://unpkg.com/alpinejs" defer></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <style>
+      form {
+        display: inline;
+      }
+      .completed {
+        text-decoration: line-through;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <h1 class="title">Lista de Tarefas</h1>
+        <p class="subtitle">O que você vai fazer <strong>Hoje</strong>?</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div
+          x-data="{todos:[], userInput: ''}"
+          x-effect="userInput = ''"
+          class="box"
+        >
+          <form x-on:submit.prevent class="is-flex is-flex-direction-row">
+            <input
+              autofocus
+              placeholder="Digite uma tarefa"
+              type="text"
+              x-model="userInput"
+              class="input"
+            />
+            <button
+              @click="
+                if(userInput.trim().length) 
+                todos.push({task: userInput, completed: false});
+                userInput=''"
+              class="button is-primary"
+            >
+              ADD
+            </button>
+          </form>
+          <hr />
+          <div
+            class="has-text-right"
+            x-show="todos.length < 1"
+            x-transition.duration.1000ms
+          >
+            <h1 class="title">Vai ler um livro! Nenhuma tarefa pra fazer!</h1>
+          </div>
+          <template x-for="todo in todos">
+            <div class="subtitle columns">
+              <div class="column">
+                <span x-text="todo.id"></span>
+                <input
+                  x-model="todo.completed"
+                  class="checkbox"
+                  type="checkbox"
+                />
+                <!-- <span x-text="todo.task" x-bind:class="{'completed': todo.completed == true}" ></span> -->
+                <!-- short hands -->
+                <span
+                  x-text="todo.task"
+                  :class="{'completed': todo.completed}"
+                ></span>
+                <hr />
+              </div>
+
+              <div class="has-text-right column is-one-fifth">
+                <button
+                  class="button is-danger"
+                  @click="todos = todos.filter((currentToDo) => currentToDo != todo)"
+                >
+                  Apaga
+                </button>
+                <button
+                  class="button is-warning"
+                  @click="userInput = todo.task;
+                todos = todos.filter((currentToDo) => currentToDo != todo)"
+                >
+                  Edita
+                </button>
+              </div>
+            </div>
+          </template>
+          <div x-show="todos.length" class="box has-text-right">
+            <div class="subtitle">
+              <span>Tarefas cumpridas</span>
+              <span
+                x-text="todos.filter((todo) => todo.completed).length"
+              ></span>
+              <span>/</span>
+              <span x-text="todos.length"></span>
+            </div>
+            <button @click="todos = [] " class="button is-black">
+              Apagar Todas as Tarefas
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
